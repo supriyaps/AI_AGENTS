@@ -1,127 +1,222 @@
-# SauceDemo Checkout Test Plan
+# SauceDemo Checkout Test Plan — SCRUM-101
 
-## User Story
-SCRUM-101: As a customer, I want to complete my purchase through a checkout process so that I can order products online.
+**Document Date:** May 7, 2026  
+**Application:** SauceDemo (https://www.saucedemo.com)  
+**Test Credentials:** standard_user / secret_sauce  
+**Scope:** End-to-end checkout workflow from product selection through order confirmation
 
-## Application Under Test
-- URL: https://www.saucedemo.com
-- Test credentials: `standard_user` / `secret_sauce`
+---
 
-## Test Scope
-Cover the end-to-end ecommerce checkout flow from product selection through order confirmation, including validations, navigation, and error handling.
+## 📊 Test Scenario Summary
 
-## Test Data
-- Username: `standard_user`
-- Password: `secret_sauce`
-- First Name: `Test`
-- Last Name: `User`
-- Zip / Postal Code: `12345`
-- Invalid First Name: `!@#$%`
-- Invalid Last Name: `123`
-- Invalid Postal Code: `` (empty)
+| Category | Test ID Range | Count | Type |
+|----------|---------------|-------|------|
+| Happy Path | HP-01 to HP-07 | 7 | Positive |
+| Negative | NEG-01 to NEG-08 | 8 | Negative |
+| Edge Cases | EDGE-01 to EDGE-08 | 8 | Edge Cases |
+| Cancellation Flow | CANCEL-01 to CANCEL-03 | 3 | Navigation |
+| UI Validation | UI-01 to UI-05 | 5 | Validation |
+| **TOTAL** | — | **31** | — |
 
-## Test Scenarios
+---
 
-### Scenario 1: Cart Review and Checkout Start
-**Objective:** Verify a logged-in user can review cart items and begin checkout.
+## 🎯 HAPPY PATH SCENARIOS (HP-01 to HP-07)
 
-Steps:
-1. Open the application URL.
-2. Log in with standard_user / secret_sauce.
-3. Add at least one product to the cart.
-4. Open the shopping cart.
-5. Verify cart item details (name, description, price, quantity).
-6. Verify total price calculation is visible.
-7. Verify buttons for "Continue Shopping" and "Checkout" are present.
+### HP-01: Successful End-to-End Checkout with Single Item
+**Objective:** Verify the complete checkout flow works correctly when purchasing a single product.
+**Test Data:** Login: standard_user/secret_sauce, Product: Sauce Labs Backpack, Info: Test/User/12345
+**Steps:** Login → Products page → Add to cart → Open cart → Click Checkout → Fill form → Continue → Review overview → Click Finish
+**Expected Result:** Order confirmation page displays "Thank you for your order!" ✅ **SC-HP01**
 
-Expected Results:
-- User is logged in and navigated to the products page.
-- Selected item appears in the cart with correct name, description, and price.
-- Total price / summary is displayed.
-- Checkout button is available.
+### HP-02: Successful End-to-End Checkout with Multiple Items
+**Objective:** Verify checkout works correctly with multiple products.
+**Test Data:** Products: Backpack + Bike Light, Checkout info: Test/User/12345
+**Steps:** Add multiple items → Verify badge count → Open cart → Verify all items → Checkout → Complete
+**Expected Result:** Order total reflects all items correctly ✅ **SC-HP02**
 
-### Scenario 2: Checkout Information Validation
-**Objective:** Validate required checkout fields and error messages.
+### HP-03: Cart Review — Verify Product Details
+**Objective:** Validate cart displays correct product information.
+**Test Data:** Product: Sauce Labs Backpack
+**Steps:** Open cart → Verify name, description, price, quantity visible
+**Expected Result:** All product details visible and correct ✅ **SC-HP03**
 
-Steps:
-1. From the cart page, click "Checkout".
-2. Leave First Name, Last Name, and Zip/Postal Code empty.
-3. Click "Continue".
-4. Verify the required field error message is displayed.
-5. Enter valid checkout information.
-6. Click "Continue" again.
+### HP-04: Checkout Information Form — Valid Data Submission
+**Objective:** Verify valid checkout information is accepted.
+**Test Data:** First Name: John, Last Name: Smith, Postal Code: 98765
+**Steps:** Fill valid checkout info → Click Continue
+**Expected Result:** Order overview page loads successfully ✅ **SC-HP04**
 
-Expected Results:
-- The checkout information page displays inputs for First Name, Last Name, and Zip/Postal Code.
-- Submission with missing required data shows a validation error and prevents progress.
-- Valid data allows navigation to the checkout overview page.
+### HP-05: Order Overview — Verify Pricing Calculation
+**Objective:** Confirm subtotal, tax, total are calculated correctly.
+**Test Data:** Item: Sauce Labs Backpack ($29.99)
+**Steps:** Open overview → Verify subtotal, tax, total visible → Verify calculation
+**Expected Result:** All pricing fields visible and calculation correct ✅ **SC-HP05**
 
-### Scenario 3: Order Overview Verification
-**Objective:** Confirm the checkout overview displays summary details before order completion.
+### HP-06: Order Completion — Verify Confirmation and Navigation
+**Objective:** Confirm successful order placement and navigation.
+**Steps:** Click Finish → Verify confirmation page → Click Back Home
+**Expected Result:** Confirmation page displays, Back Home returns to products ✅ **SC-HP06**
 
-Steps:
-1. On the checkout information page, enter valid First Name, Last Name, and Zip/Postal Code.
-2. Click "Continue".
-3. Verify the checkout overview page displays:
-   - Order item list and item details.
-   - Payment information label.
-   - Shipping information label.
-   - Subtotal, tax, and total amount.
-   - "Cancel" and "Finish" buttons.
+### HP-07: Continue Shopping — Cart to Products Navigation
+**Objective:** Verify Continue Shopping button returns to products.
+**Steps:** Click Continue Shopping on cart page → Verify products page
+**Expected Result:** Products page displayed with cart preserved ✅ **SC-HP07**
 
-Expected Results:
-- Overview page shows full order summary and payment/shipping details.
-- Pricing information is visible and presented clearly.
-- Cancellation and finish actions are available.
+---
 
-### Scenario 4: Order Completion
-**Objective:** Complete checkout and verify order confirmation.
+## ⚠️ NEGATIVE SCENARIOS (NEG-01 to NEG-08)
 
-Steps:
-1. From the checkout overview page, click "Finish".
-2. Verify redirection to the order confirmation page.
-3. Confirm success message text appears.
-4. Confirm the "Back Home" button is displayed and returns user to the products page.
+### NEG-01: Submit Checkout Form with All Fields Empty
+**Expected Result:** Error message displayed, form not submitted ✅ **SC-NEG01**
 
-Expected Results:
-- The order confirmation page loads.
-- Success message confirms order completion.
-- Back Home button returns to products view.
+### NEG-02: Submit with First Name Empty
+**Test Data:** Last Name: User, Postal Code: 12345
+**Expected Result:** Error for missing First Name ✅ **SC-NEG02**
 
-### Scenario 5: Checkout Cancellation Flow
-**Objective:** Verify checkout can be canceled and user is returned to the cart.
+### NEG-03: Submit with Last Name Empty
+**Test Data:** First Name: Test, Postal Code: 12345
+**Expected Result:** Error for missing Last Name ✅ **SC-NEG03**
 
-Steps:
-1. From the cart page, click "Checkout".
-2. On the checkout information page, click "Cancel".
-3. Verify user is returned to the cart page.
-4. Repeat checkout and proceed to overview.
-5. On the overview page, click "Cancel".
-6. Verify user is returned to the cart.
+### NEG-04: Submit with Postal Code Empty
+**Test Data:** First Name: Test, Last Name: User
+**Expected Result:** Error for missing Postal Code ✅ **SC-NEG04**
 
-Expected Results:
-- Cancel returns user to the cart page from both checkout information and overview steps.
-- No checkout progress is completed.
+### NEG-05: Enter Special Characters in First Name
+**Test Data:** First Name: !@#$%
+**Expected Result:** Application behavior documented ✅ **SC-NEG05**
 
-### Scenario 6: Error Handling for Invalid Input
-**Objective:** Validate the checkout form rejects incomplete or invalid input.
+### NEG-06: Enter Numeric Value in Last Name
+**Test Data:** Last Name: 123
+**Expected Result:** Application behavior documented ✅ **SC-NEG06**
 
-Steps:
-1. Start checkout from cart.
-2. Enter invalid input values, such as special characters or incomplete postal code.
-3. Click "Continue".
-4. Observe validation behavior.
+### NEG-07: Enter Single Character in Postal Code
+**Test Data:** Postal Code: 1
+**Expected Result:** Application behavior documented ✅ **SC-NEG07**
 
-Expected Results:
-- Invalid or empty fields should prevent progress if required.
-- Appropriate validation messaging is displayed for missing input.
-- The checkout system enforces mandatory fields.
+### NEG-08: Attempt Checkout with Empty Cart
+**Expected Result:** Behavior documented (prevented or allowed) ✅ **SC-NEG08**
 
-## Reporting and Evidence
-- Capture screenshots at key workflow points:
-  - Login success
-  - Cart review page
-  - Checkout validation error
-  - Overview summary
-  - Order confirmation
-- Document findings and any unexpected UI behavior in the manual exploratory results.
+---
+
+## 🎪 EDGE CASE SCENARIOS (EDGE-01 to EDGE-08)
+
+### EDGE-01: Add Maximum Products to Cart and Checkout
+**Test Data:** Add all 6 available products
+**Expected Result:** All items successfully added and checkout completes ✅ **SC-EDGE01**
+
+### EDGE-02: Add, Remove, Re-add Product and Checkout
+**Test Data:** Product: Sauce Labs Backpack
+**Steps:** Add → Remove → Re-add → Checkout
+**Expected Result:** Re-added item successfully checks out ✅ **SC-EDGE02**
+
+### EDGE-03: Refresh Page Mid-Checkout
+**Steps:** On checkout form → Refresh page → Check form state
+**Expected Result:** Form state behavior documented ✅ **SC-EDGE03**
+
+### EDGE-04: Browser Back Button from Overview Page
+**Steps:** On overview → Click browser back button
+**Expected Result:** Navigation behavior documented ✅ **SC-EDGE04**
+
+### EDGE-05: Enter Very Long String in Form Fields
+**Test Data:** 105 character strings in all fields
+**Expected Result:** Behavior documented (accept/truncate/reject) ✅ **SC-EDGE05**
+
+### EDGE-06: Enter Whitespace/Spaces in Required Fields
+**Test Data:** Spaces in First Name, Last Name, Postal Code
+**Expected Result:** Whitespace handling documented ✅ **SC-EDGE06**
+
+### EDGE-07: Rapidly Click Finish Button Multiple Times
+**Steps:** Click Finish 5 times rapidly → Verify order count
+**Expected Result:** Only one order placed (duplicate prevention) ✅ **SC-EDGE07**
+
+### EDGE-08: Verify Cart Badge Count Updates
+**Steps:** Add items → Verify badge increments → Remove → Verify decrements
+**Expected Result:** Badge count always accurate ✅ **SC-EDGE08**
+
+---
+
+## 🚫 CANCELLATION FLOW (CANCEL-01 to CANCEL-03)
+
+### CANCEL-01: Cancel from Checkout Information Page
+**Steps:** Click Cancel on checkout info page → Verify return to cart
+**Expected Result:** User returned to cart with items preserved ✅ **SC-CANCEL01**
+
+### CANCEL-02: Cancel from Order Overview Page
+**Steps:** Click Cancel on overview page → Verify navigation
+**Expected Result:** Navigation handled correctly ✅ **SC-CANCEL02**
+
+### CANCEL-03: Verify No Partial Order After Cancellation
+**Steps:** Cancel checkout → Log out/in → Verify cart state
+**Expected Result:** No order placed, cart items preserved ✅ **SC-CANCEL03**
+
+---
+
+## 🎨 UI VALIDATION SCENARIOS (UI-01 to UI-05)
+
+### UI-01: Verify All Buttons Are Visible and Clickable
+**Test Pages:** Cart, Checkout Info, Overview, Confirmation
+**Expected Result:** All buttons visible, labeled, and functional ✅ **SC-UI01**
+
+### UI-02: Verify Step Indicator/Breadcrumb Matches Checkout Stage
+**Steps:** Navigate through checkout → Verify step indicator updates
+**Expected Result:** Step indicator accurately reflects current position ✅ **SC-UI02**
+
+### UI-03: Verify Page Titles and Headings Are Correct
+**Expected Titles:** Products, Your Cart, Checkout Info, Overview, Confirmation
+**Expected Result:** All page titles correct and descriptive ✅ **SC-UI03**
+
+### UI-04: Verify Product Image, Name, and Price Render Correctly
+**Steps:** Navigate to cart → Verify product image, name, price
+**Expected Result:** All product information visible and correct ✅ **SC-UI04**
+
+### UI-05: Verify Checkout Form Field Labels
+**Expected Labels:** First Name, Last Name, Zip / Postal Code
+**Expected Result:** All labels clear and properly associated ✅ **SC-UI05**
+
+---
+
+## 📋 Acceptance Criteria Mapping
+
+| AC ID | Requirement | Covered By Test IDs |
+|-------|-------------|-------------------|
+| AC-01 | Login with valid credentials | HP-01, HP-02, HP-03 |
+| AC-02 | Add products to cart | HP-01, HP-02, HP-07, EDGE-01, EDGE-02 |
+| AC-03 | Cart displays correct details | HP-03, UI-04, EDGE-08 |
+| AC-04 | Checkout button navigates to form | HP-01, HP-04, UI-01 |
+| AC-05 | Empty form shows validation error | NEG-01, NEG-02, NEG-03, NEG-04, EDGE-06 |
+| AC-06 | Valid info proceeds to overview | HP-04, HP-05, UI-05 |
+| AC-07 | Overview shows all details | HP-05, HP-06, UI-03 |
+| AC-08 | Finish navigates to confirmation | HP-06, EDGE-07 |
+| AC-09 | Confirmation shows success message | HP-06 |
+| AC-10 | Back Home returns to products | HP-06, HP-07 |
+| AC-11 | Cancel from info returns to cart | CANCEL-01 |
+| AC-12 | Cancel from overview returns to cart | CANCEL-02 |
+| AC-13 | Invalid input handled appropriately | NEG-05, NEG-06, EDGE-05, EDGE-06 |
+| AC-14 | Empty postal code prevented | NEG-04, NEG-07 |
+
+---
+
+## 🖼️ Screenshot Checkpoints
+
+All screenshots saved to: `screenshots/manual/` (Step 3) and `screenshots/automated/` (Step 5)
+
+| Checkpoint | Description |
+|------------|-------------|
+| SC-LOGIN | Login page and successful authentication |
+| SC-PRODUCTS | Products page after login |
+| SC-CART-ITEMS | Cart page with items |
+| SC-CHECKOUT-FORM | Checkout information form (empty) |
+| SC-CHECKOUT-ERROR | Validation error state |
+| SC-CHECKOUT-FILLED | Form with valid data |
+| SC-OVERVIEW | Order overview page |
+| SC-CONFIRMATION | Order confirmation page |
+| SC-BUTTONS | All interactive buttons |
+| SC-LABELS | Form field labels |
+
+---
+
+## ✅ Approval & Sign-off
+
+- **Plan Version:** 1.0 (Refined - 31 Test Scenarios)
+- **Created Date:** May 7, 2026
+- **Status:** Ready for STEP 3 — Manual Exploratory Testing
